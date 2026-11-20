@@ -1,0 +1,794 @@
+<!doctype html>
+<!--
+  MyOmniKit.com | Old vs New Tax Regime Calculator (FY 2026-27)
+  Calculations run in the browser; this page makes no external requests.
+
+  QUICK EDITS
+  - Tax rules live in the RULES block inside the first <script> (update after each Budget).
+  - Ads are hidden until AdSense approves the site. After approval, change data-ads="off" to
+    data-ads="on" on the <html> tag and paste your ad code inside the two .ad boxes.
+  - Next-tool links: edit NEXT_TOOLS in the second <script> (set url when a tool goes live).
+  - Shared header, footer and most styling come from /assets/site.css.
+-->
+<html lang="en-IN" data-ads="off">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Old vs New Tax Regime Calculator FY 2026-27 | MyOmniKit</title>
+<meta name="description" content="Free old vs new tax regime calculator for FY 2026-27. See which saves more and how many deductions the old regime needs to win. Private and instant.">
+<link rel="canonical" href="https://myomnikit.com/money/tax/old-vs-new-tax-regime-calculator/">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<meta name="theme-color" content="#2563EB">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="MyOmniKit">
+<meta property="og:title" content="Old vs New Tax Regime Calculator FY 2026-27 | MyOmniKit">
+<meta property="og:description" content="Find out which tax regime saves you more, and exactly how many deductions the old regime needs to win.">
+<meta property="og:url" content="https://myomnikit.com/money/tax/old-vs-new-tax-regime-calculator/">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+
+<!-- Structured data: FAQ (text must match the visible FAQ below) -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {"@type": "Question", "name": "Is income up to ₹12 lakh really tax-free in the new regime?",
+     "acceptedAnswer": {"@type": "Answer", "text": "Under the new regime, taxable income up to ₹12 lakh gets a rebate that brings the tax to nil. A salaried person also gets a ₹75,000 standard deduction, so gross salary up to ₹12.75 lakh can end up with no tax. Income taxed at special rates, such as capital gains, is not covered by this calculator."}},
+    {"@type": "Question", "name": "Which regime is better for me, old or new?",
+     "acceptedAnswer": {"@type": "Answer", "text": "The new regime has lower rates and almost no deductions. The old regime has higher rates but lets you subtract deductions such as 80C, HRA, health insurance and home loan interest. The old regime only wins when your total deductions are high enough. The breakeven figure in this calculator shows exactly how high they need to be."}},
+    {"@type": "Question", "name": "Can I switch between the old and new regime every year?",
+     "acceptedAnswer": {"@type": "Answer", "text": "Salaried people with no business income can generally choose a regime each year when they file their return. People with business or professional income face stricter rules on switching, so check with a chartered accountant. In every case, file your return by the due date."}},
+    {"@type": "Question", "name": "Is my income data stored or sent anywhere?",
+     "acceptedAnswer": {"@type": "Answer", "text": "No. Every calculation runs in your browser on your own device. Nothing you type into the calculator is uploaded or saved."}}
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {"@type": "ListItem", "position": 1, "name": "Home", "item": "https://myomnikit.com/"},
+    {"@type": "ListItem", "position": 2, "name": "Money", "item": "https://myomnikit.com/money/"},
+    {"@type": "ListItem", "position": 3, "name": "Tax", "item": "https://myomnikit.com/money/tax/"},
+    {"@type": "ListItem", "position": 4, "name": "Old vs New Tax Regime Calculator"}
+  ]
+}
+</script>
+
+<link rel="stylesheet" href="/assets/site.css">
+<style>
+/* ---------- Tool ---------- */
+.tool{display:grid;grid-template-columns:1fr;gap:20px;align-items:start;margin:8px 0 20px}
+@media (min-width:900px){ .tool{grid-template-columns:minmax(0,1fr) minmax(0,1fr)} }
+.panel{border:1px solid var(--line);border-radius:14px;padding:20px}
+.panel-in{background:var(--card)}
+.panel-out{background:var(--bg);box-shadow:0 1px 3px rgba(15,23,42,.06)}
+.panel h2{margin:0 0 14px;font-size:18px;letter-spacing:-.01em}
+.panel h2 small{font-weight:400;color:var(--muted);font-size:12.5px;margin-left:6px}
+.grid{display:grid;grid-template-columns:1fr;gap:16px}
+@media (min-width:520px){ .grid.two-col{grid-template-columns:1fr 1fr} .span2{grid-column:1 / -1} }
+label{display:block;font-weight:600;font-size:14px;margin-bottom:5px}
+input[type=text],select{width:100%;min-height:44px;padding:10px 12px;font:inherit;font-size:16px;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:10px}
+input[type=text]:hover,select:hover{border-color:#CBD5E1}
+input[type=range]{width:100%;height:28px;margin:4px 0 0;accent-color:var(--brand);cursor:pointer}
+.hint{display:block;min-height:18px;font-size:12.5px;color:var(--muted);margin-top:2px}
+.check{display:flex;gap:10px;align-items:center;font-weight:500;font-size:15px;min-height:44px;cursor:pointer}
+.check input{width:20px;height:20px;accent-color:var(--brand);flex:none}
+details.more{margin-top:16px;border-top:1px solid var(--line);padding-top:12px}
+summary{cursor:pointer;font-weight:600;color:var(--brand);min-height:36px;display:flex;align-items:center}
+details.more .grid{margin-top:12px}
+.btn{min-height:44px;padding:0 18px;font:inherit;font-weight:600;font-size:15px;border-radius:10px;cursor:pointer;border:1px solid var(--line);background:var(--bg);color:var(--ink)}
+.btn:hover{background:var(--brand-soft);border-color:#BFDBFE}
+.btn-primary{background:var(--brand);border-color:var(--brand);color:#fff;min-width:140px}
+.btn-primary:hover{background:var(--brand-dark);border-color:var(--brand-dark)}
+.actions{display:flex;gap:10px;margin-top:18px}
+
+/* result */
+.out-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}
+.out-head h2{margin:0}
+.verdict{min-height:104px;border-radius:var(--radius);padding:16px;background:var(--good-soft);border:1px solid #A7F3D0}
+.verdict.old{background:var(--brand-soft);border-color:#BFDBFE}
+.verdict.neutral{background:var(--card);border-color:var(--line)}
+.verdict b.big{display:block;font-size:clamp(19px,3.4vw,23px);line-height:1.3;letter-spacing:-.01em}
+.verdict span{color:var(--muted);font-size:14.5px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px;min-height:100px}
+.box{border:1px solid var(--line);border-radius:var(--radius);padding:12px}
+.box.win{border-color:var(--good);box-shadow:inset 0 0 0 1px var(--good)}
+.box .t{font-size:13px;color:var(--muted);margin:0;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.box .n{font-size:clamp(19px,3.6vw,24px);font-weight:700;margin:2px 0 0;letter-spacing:-.01em}
+.box .s{font-size:12.5px;color:var(--muted);margin:2px 0 0}
+.badge{font-size:11px;font-weight:700;color:var(--good);background:var(--good-soft);padding:0 8px;border-radius:99px}
+.breakeven{margin-top:12px;border-radius:var(--radius);padding:14px;background:var(--brand-soft);border:1px solid #DBEAFE;min-height:190px}
+.breakeven h3{margin:0 0 6px;font-size:15.5px}
+.breakeven p{margin:6px 0;font-size:15px}
+.breakeven ul{margin:6px 0 0;padding-left:18px;font-size:15px}
+.num{font-weight:700;white-space:nowrap}
+.tips{margin-top:12px;border-radius:var(--radius);padding:14px;background:var(--warn-soft);border:1px solid #FDE68A;min-height:150px}
+.tips h3{margin:0 0 6px;font-size:15.5px;color:var(--warn)}
+.tips ul{margin:0;padding-left:20px;font-size:14.5px}
+.tips li{margin:5px 0}
+table{width:100%;border-collapse:collapse;font-size:14.5px;margin:8px 0}
+th,td{padding:7px 6px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+td:last-child,th:last-child{text-align:right}
+.tiny{font-size:12.5px;color:var(--muted);margin:6px 0 0}
+
+/* next tools */
+.next h2{font-size:18px;margin:0 0 12px}
+.tiles{display:grid;grid-template-columns:1fr;gap:12px}
+@media (min-width:720px){ .tiles{grid-template-columns:repeat(3,1fr)} }
+.tile{display:block;border:1px solid var(--line);border-radius:var(--radius);padding:14px;text-decoration:none;color:var(--ink);background:var(--card);min-height:92px}
+a.tile:hover{border-color:var(--brand);background:var(--brand-soft)}
+.tile b{display:block;margin-bottom:2px;font-size:15px}
+.tile span{font-size:13.5px;color:var(--muted)}
+.tile .soon{display:inline-block;margin-top:6px;font-size:11px;font-weight:700;color:var(--muted);border:1px solid var(--line);border-radius:99px;padding:0 8px;background:var(--bg)}
+
+/* ---------- Guide ---------- */
+.guide{max-width:760px;margin:8px 0 8px}
+.guide h2{font-size:24px;margin:34px 0 10px;letter-spacing:-.01em}
+.guide h3{font-size:18px;margin:22px 0 6px}
+.guide p,.guide li{color:#1E293B}
+.guide ol,.guide ul{padding-left:22px}
+.guide .tblwrap{overflow-x:auto}
+.formula{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:14px 16px;font-size:15px}
+
+</style>
+</head>
+<body>
+
+<a class="skip" href="#main">Skip to content</a>
+<header class="site-header">
+  <div class="container bar">
+    <a class="logo" href="/" aria-label="MyOmniKit home"><span class="logo-mark" aria-hidden="true"></span><span>My<b>OmniKit</b></span></a>
+    <nav class="main-nav" aria-label="Main">
+      <a class="active" href="/money/">Money</a>
+      <a class="nav-about" href="/about/">About</a>
+      <a class="all-tools" href="/tools/">All Tools</a>
+    </nav>
+  </div>
+</header>
+<nav class="container crumbs-bar" aria-label="Breadcrumb"><ol><li><a href="/">Home</a></li><li><a href="/money/">Money</a></li><li><a href="/money/tax/">Tax</a></li><li><span aria-current="page">Old vs New Regime</span></li></ol></nav>
+
+<main id="main" class="container">
+  <section class="hero">
+    <h1>Old vs New Tax Regime Calculator (FY 2026-27)</h1>
+    <p class="lede">Compare your tax under both regimes and see exactly how many deductions the old regime needs to win.</p>
+    <div class="trust" role="note">100% Free &bull; Instant Client-Side Processing &bull; Privacy First</div>
+  </section>
+
+  <!-- ADVERTISEMENT SLOT 1 (top). Paste AdSense code inside this box. Height is reserved to avoid layout shift. -->
+  <aside class="ad ad-top" aria-label="Advertisement"><span>Advertisement</span></aside>
+
+  <section class="tool" aria-label="Tax regime calculator">
+    <!-- INPUTS -->
+    <div class="panel panel-in">
+      <h2>Your numbers <small>(example values, change them to yours)</small></h2>
+      <div class="grid two-col">
+        <div>
+          <label for="age">Your age group</label>
+          <select id="age">
+            <option value="under60">Below 60</option>
+            <option value="senior">60 to 79</option>
+            <option value="super">80 or above</option>
+          </select>
+          <span class="hint">Changes the old regime slabs and the health insurance limit.</span>
+        </div>
+        <div>
+          <label for="income">Yearly gross income (₹)</label>
+          <input type="text" id="income" inputmode="numeric" autocomplete="off" value="15,00,000">
+          <span class="hint" id="h_income">₹15,00,000 (15 lakh)</span>
+        </div>
+        <div class="span2">
+          <label class="check"><input type="checkbox" id="salaried" checked> I am a salaried employee or pensioner (gets the standard deduction)</label>
+        </div>
+        <div>
+          <label for="c80">80C investments (₹)</label>
+          <input type="text" id="c80" inputmode="numeric" autocomplete="off" value="1,50,000">
+          <input type="range" id="c80r" min="0" max="150000" step="5000" value="150000" aria-label="80C investments slider">
+          <span class="hint">EPF, PPF, ELSS, life insurance, tuition fees. Limit ₹1,50,000.</span>
+        </div>
+        <div>
+          <label for="dSelf">Health insurance (₹)</label>
+          <input type="text" id="dSelf" inputmode="numeric" autocomplete="off" value="25,000">
+          <input type="range" id="dSelfr" min="0" max="25000" step="1000" value="25000" aria-label="Health insurance slider">
+          <span class="hint" id="h_dSelf">For you and your family. Limit ₹25,000 at your age.</span>
+        </div>
+        <div class="span2">
+          <label for="homeLoan">Home loan interest, self-occupied house (₹)</label>
+          <input type="text" id="homeLoan" inputmode="numeric" autocomplete="off">
+          <input type="range" id="homeLoanr" min="0" max="200000" step="5000" value="0" aria-label="Home loan interest slider">
+          <span class="hint">Limit ₹2,00,000 a year.</span>
+        </div>
+      </div>
+
+      <details class="more">
+        <summary>More options: HRA, NPS, parents' insurance, other</summary>
+        <div class="grid two-col">
+          <div>
+            <label for="basic">Basic salary + DA, yearly (₹)</label>
+            <input type="text" id="basic" inputmode="numeric" autocomplete="off">
+            <span class="hint">Needed for the HRA and employer NPS limits.</span>
+          </div>
+          <div>
+            <label for="hraReceived">HRA you receive, yearly (₹)</label>
+            <input type="text" id="hraReceived" inputmode="numeric" autocomplete="off">
+            <span class="hint"></span>
+          </div>
+          <div>
+            <label for="rent">Rent you pay, yearly (₹)</label>
+            <input type="text" id="rent" inputmode="numeric" autocomplete="off">
+            <span class="hint"></span>
+          </div>
+          <div>
+            <label class="check" style="margin-top:22px"><input type="checkbox" id="metro"> I live in Delhi, Mumbai, Kolkata or Chennai</label>
+          </div>
+          <div>
+            <label for="dParents">Health insurance, parents (₹)</label>
+            <input type="text" id="dParents" inputmode="numeric" autocomplete="off">
+            <span class="hint"></span>
+          </div>
+          <div>
+            <label class="check" style="margin-top:22px"><input type="checkbox" id="parentsSenior"> My parents are 60 or older</label>
+          </div>
+          <div>
+            <label for="nps1B">Extra NPS contribution, 80CCD(1B) (₹)</label>
+            <input type="text" id="nps1B" inputmode="numeric" autocomplete="off">
+            <input type="range" id="nps1Br" min="0" max="50000" step="1000" value="0" aria-label="Extra NPS slider">
+            <span class="hint">Limit ₹50,000.</span>
+          </div>
+          <div>
+            <label for="npsEmployer">Employer NPS contribution, yearly (₹)</label>
+            <input type="text" id="npsEmployer" inputmode="numeric" autocomplete="off">
+            <span class="hint">Counts in both regimes, up to a limit based on basic pay.</span>
+          </div>
+          <div class="span2">
+            <label for="otherOld">Other old-regime deductions (₹)</label>
+            <input type="text" id="otherOld" inputmode="numeric" autocomplete="off">
+            <span class="hint">Education loan interest, donations, savings account interest, and similar.</span>
+          </div>
+        </div>
+      </details>
+
+      <div class="actions">
+        <button type="button" class="btn" id="resetBtn">Reset</button>
+      </div>
+    </div>
+
+    <!-- LIVE RESULTS -->
+    <div class="panel panel-out" id="result" aria-live="polite">
+      <div class="out-head">
+        <h2>Your result</h2>
+        <button type="button" class="btn btn-primary" id="copyBtn">Copy Result</button>
+      </div>
+      <div id="verdict" class="verdict"><b class="big">New regime saves you ₹1,05,300 a year</b><span>That is about ₹8,775 a month. The other regime would cost ₹2,02,800.</span></div>
+      <div class="two" id="two"><div class="box win"><p class="t">New regime tax<span class="badge">Lower</span></p><p class="n">₹97,500</p><p class="s">Taxable income ₹14,25,000</p></div><div class="box"><p class="t">Old regime tax</p><p class="n">₹2,02,800</p><p class="s">Taxable income ₹12,75,000</p></div></div>
+      <div class="breakeven" id="breakeven"><h3>Breakeven: how many deductions would the old regime need?</h3><p>The old regime matches the new one when your old-regime deductions add up to <span class="num">₹5,93,730</span>. You have <span class="num">₹2,25,000</span> now, so you would need <span class="num">₹3,68,730</span> more.</p><p>Room you still have within the limits (if you can use it):</p><ul><li>Health insurance (80D): ₹25,000</li><li>Extra NPS (80CCD(1B)): ₹50,000</li></ul><p>Even if you used all of it, the old regime would still cost <span class="num">₹81,900</span> more than the new regime.</p></div>
+      <details class="more" id="howdetails">
+        <summary>See how this was worked out</summary>
+        <div id="how"><table><tbody><tr><th>Old regime deductions</th><th>Amount</th></tr><tr><td>Standard deduction</td><td>₹50,000</td></tr><tr><td>80C investments</td><td>₹1,50,000</td></tr><tr><td>Health insurance (self &amp; family)</td><td>₹25,000</td></tr><tr><td><b>Total</b></td><td><b>₹2,25,000</b></td></tr></tbody></table><table><tbody><tr><th>Step</th><th>New</th><th>Old</th></tr><tr><td>Gross income</td><td>₹15,00,000</td><td>₹15,00,000</td></tr><tr><td>Deductions taken</td><td>₹75,000</td><td>₹2,25,000</td></tr><tr><td>Taxable income</td><td>₹14,25,000</td><td>₹12,75,000</td></tr><tr><td><b>Tax with cess</b></td><td><b>₹97,500</b></td><td><b>₹2,02,800</b></td></tr></tbody></table><p class="tiny">Tax includes the rebate, surcharge (with marginal relief) and 4% cess, rounded to the nearest ₹10.</p></div>
+      </details>
+      <div class="tips" id="tips">
+        <h3>Check this before you decide</h3>
+        <ul id="tiplist"><li>Check which regime your employer is using for monthly tax (TDS). Your payslip or Form 16 shows it. You can still choose either regime when you file your return, but file by the due date.</li><li>Under the new regime you do not need to lock money into tax-saving products. Invest for your goals and time horizon instead.</li><li>Treat the result as an estimate. Income from capital gains or other special-rate sources is not included.</li></ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="next" aria-labelledby="next-h">
+    <h2 id="next-h">Next, try these</h2>
+    <div class="tiles" id="tiles"><div class="tile"><b>Unused Deduction Finder</b><span>See how much tax-saving room you still have this year.</span><br><span class="soon">Coming soon</span></div><div class="tile"><b>Freelancer Tax Estimator</b><span>Working for yourself? Estimate tax and advance tax dates.</span><br><span class="soon">Coming soon</span></div><div class="tile"><b>Family Capital Gains Planner</b><span>Plan sales across family members to use each exemption.</span><br><span class="soon">Coming soon</span></div></div>
+  </section>
+
+  <!-- ADVERTISEMENT SLOT 2 (in-content). Paste a responsive display ad here. -->
+  <aside class="ad ad-mid" aria-label="Advertisement"><span>Advertisement</span></aside>
+
+  <!-- INFORMATIONAL GUIDE -->
+  <article class="guide">
+    <h2>How to use this calculator</h2>
+    <ol>
+      <li>Choose your age group and enter your yearly gross income, which is your income before any deductions.</li>
+      <li>Tick the salaried box if you earn a salary or pension. This adds the standard deduction.</li>
+      <li>Enter your 80C investments, health insurance and home loan interest using the boxes or sliders. Open "More options" for HRA, NPS, parents' insurance and other deductions.</li>
+      <li>Read the verdict, then the breakeven. Use "Copy Result" to save or share the summary, and "Reset" to start again.</li>
+    </ol>
+
+    <h2>How the calculation works</h2>
+    <p>The calculator works out your taxable income and tax separately for each regime, then compares them.</p>
+    <div class="formula">
+      <b>Taxable income</b> = gross income &minus; deductions allowed in that regime<br>
+      <b>Tax</b> = slab tax &minus; rebate, plus surcharge (if any), plus 4% health and education cess
+    </div>
+
+    <h3>Worked example: ₹15,00,000 salary, new regime</h3>
+    <p>Taxable income is ₹15,00,000 &minus; ₹75,000 standard deduction = ₹14,25,000. Tax is ₹20,000 (₹4 to 8 lakh at 5%) + ₹40,000 (₹8 to 12 lakh at 10%) + ₹33,750 (₹12 to 14.25 lakh at 15%) = ₹93,750. Adding 4% cess of ₹3,750 gives ₹97,500.</p>
+
+    <h3>New regime slabs, FY 2026-27</h3>
+    <div class="tblwrap"><table>
+      <tr><th>Taxable income</th><th>Rate</th></tr>
+      <tr><td>Up to ₹4,00,000</td><td>Nil</td></tr>
+      <tr><td>₹4,00,001 to ₹8,00,000</td><td>5%</td></tr>
+      <tr><td>₹8,00,001 to ₹12,00,000</td><td>10%</td></tr>
+      <tr><td>₹12,00,001 to ₹16,00,000</td><td>15%</td></tr>
+      <tr><td>₹16,00,001 to ₹20,00,000</td><td>20%</td></tr>
+      <tr><td>₹20,00,001 to ₹24,00,000</td><td>25%</td></tr>
+      <tr><td>Above ₹24,00,000</td><td>30%</td></tr>
+    </table></div>
+
+    <h3>Old regime slabs, FY 2026-27</h3>
+    <div class="tblwrap"><table>
+      <tr><th>Taxable income</th><th>Rate</th></tr>
+      <tr><td>Up to ₹2,50,000 (₹3,00,000 if aged 60 to 79, ₹5,00,000 if 80 or above)</td><td>Nil</td></tr>
+      <tr><td>Up to ₹5,00,000</td><td>5%</td></tr>
+      <tr><td>₹5,00,001 to ₹10,00,000</td><td>20%</td></tr>
+      <tr><td>Above ₹10,00,000</td><td>30%</td></tr>
+    </table></div>
+
+    <h3>Rebate, standard deduction, surcharge and cess</h3>
+    <ul>
+      <li><b>Standard deduction</b> for salaried people and pensioners: ₹75,000 in the new regime and ₹50,000 in the old regime.</li>
+      <li><b>Rebate:</b> new regime tax is nil up to ₹12 lakh of taxable income (rebate up to ₹60,000), with marginal relief just above it. Old regime tax is nil up to ₹5 lakh (rebate up to ₹12,500).</li>
+      <li><b>Surcharge:</b> 10% above ₹50 lakh, 15% above ₹1 crore and 25% above ₹2 crore. Above ₹5 crore it is 37% in the old regime and stays at 25% in the new regime. Marginal relief is applied at each step.</li>
+      <li><b>Cess:</b> 4% on tax plus surcharge, in both regimes.</li>
+    </ul>
+
+    <h3>Old regime deduction limits used here</h3>
+    <ul>
+      <li>80C: up to ₹1,50,000.</li>
+      <li>Health insurance (80D): ₹25,000 for self and family (₹50,000 if you are a senior citizen), plus ₹25,000 for parents (₹50,000 if they are seniors).</li>
+      <li>Extra NPS, 80CCD(1B): up to ₹50,000.</li>
+      <li>Home loan interest on a self-occupied house: up to ₹2,00,000.</li>
+      <li>HRA: the lowest of HRA received, rent paid minus 10% of basic pay, and 50% (metro) or 40% of basic pay.</li>
+      <li>Employer NPS: allowed in both regimes, up to 14% of basic pay in the new regime and 10% in the old.</li>
+    </ul>
+
+    <h3>How the breakeven is found</h3>
+    <p>If the old regime costs more, the calculator keeps adding deductions to it, step by step, until its tax matches the new regime. The total deductions at that point is your breakeven. It then shows how much of the gap you could close using the room left in each limit. If the old regime already wins, it shows how far your deductions could fall before that changes.</p>
+
+    <h3>What is not included</h3>
+    <p>Capital gains and other special-rate income, alternative minimum tax, foreign income, and less common deductions. Use the "Other old-regime deductions" box for any old-regime deduction not listed. This is an estimate for planning, not a filed return.</p>
+
+    <h2>Frequently asked questions</h2>
+    <h3>Is income up to ₹12 lakh really tax-free in the new regime?</h3>
+    <p>Under the new regime, taxable income up to ₹12 lakh gets a rebate that brings the tax to nil. A salaried person also gets a ₹75,000 standard deduction, so gross salary up to ₹12.75 lakh can end up with no tax. Income taxed at special rates, such as capital gains, is not covered by this calculator.</p>
+    <h3>Which regime is better for me, old or new?</h3>
+    <p>The new regime has lower rates and almost no deductions. The old regime has higher rates but lets you subtract deductions such as 80C, HRA, health insurance and home loan interest. The old regime only wins when your total deductions are high enough. The breakeven figure in this calculator shows exactly how high they need to be.</p>
+    <h3>Can I switch between the old and new regime every year?</h3>
+    <p>Salaried people with no business income can generally choose a regime each year when they file their return. People with business or professional income face stricter rules on switching, so check with a chartered accountant. In every case, file your return by the due date.</p>
+    <h3>Is my income data stored or sent anywhere?</h3>
+    <p>No. Every calculation runs in your browser on your own device. Nothing you type into the calculator is uploaded or saved.</p>
+  </article>
+</main>
+
+<div class="container tool-note"><p id="rules"></p><p>This calculator gives an educational estimate, not tax advice. Section names like 80C follow the familiar numbering; the Income Tax Act 2025 may renumber them. For filing, confirm with a chartered accountant or the official income tax portal. Read the full <a href="/disclaimer/">disclaimer</a>.</p></div>
+<footer class="site-footer">
+  <div class="container">
+    <div class="foot-grid">
+      <div class="foot-brand">
+        <a class="logo" href="/" aria-label="MyOmniKit home"><span class="logo-mark" aria-hidden="true"></span><span>My<b>OmniKit</b></span></a>
+        <p>Free, private tools for everyday money and tax decisions.</p>
+      </div>
+      <div class="foot-col"><p class="foot-title">Tools</p><ul>
+        <li><a href="index.html">Tax Regime Calculator</a></li>
+        <li><a href="/money/">Money tools</a></li>
+        <li><a href="/tools/">All tools</a></li>
+      </ul></div>
+      <div class="foot-col"><p class="foot-title">Company</p><ul>
+        <li><a href="/about/">About</a></li>
+        <li><a href="/contact/">Contact</a></li>
+      </ul></div>
+      <div class="foot-col"><p class="foot-title">Legal</p><ul>
+        <li><a href="/privacy/">Privacy Policy</a></li>
+        <li><a href="/terms/">Terms of Use</a></li>
+        <li><a href="/disclaimer/">Disclaimer</a></li>
+      </ul></div>
+    </div>
+    <div class="foot-base"><span>&copy; 2026 MyOmniKit.com</span><a href="mailto:hello@myomnikit.com">hello@myomnikit.com</a></div>
+  </div>
+</footer>
+
+<script>
+(function (root) {
+  // ---- RULES (edit here when the Budget or Finance Act changes anything) ----
+  var RULES = {
+    fy: "FY 2026-27",
+    ay: "AY 2027-28",
+    asOf: "19 Nov 2026",
+    cess: 0.04,
+    stdNew: 75000,
+    stdOld: 50000,
+    // [upper limit, rate]
+    newSlabs: [[400000, 0], [800000, 0.05], [1200000, 0.10], [1600000, 0.15], [2000000, 0.20], [2400000, 0.25], [Infinity, 0.30]],
+    oldSlabs: {
+      under60: [[250000, 0], [500000, 0.05], [1000000, 0.20], [Infinity, 0.30]],
+      senior:  [[300000, 0], [500000, 0.05], [1000000, 0.20], [Infinity, 0.30]],
+      super:   [[500000, 0], [1000000, 0.20], [Infinity, 0.30]]
+    },
+    rebateNew: { limit: 1200000, max: 60000 },
+    rebateOld: { limit: 500000, max: 12500 },
+    // income above threshold -> surcharge rate
+    surcharge: [[5000000, 0.10], [10000000, 0.15], [20000000, 0.25], [50000000, 0.37]],
+    newSurchargeCap: 0.25,
+    limits: {
+      c80: 150000,
+      dSelf: 25000, dSelfSenior: 50000,
+      dParents: 25000, dParentsSenior: 50000,
+      nps1B: 50000,
+      homeLoan: 200000,
+      npsEmpNew: 0.14, npsEmpOld: 0.10
+    }
+  };
+
+  function num(x) { x = Number(x); return isFinite(x) && x > 0 ? x : 0; }
+
+  function slabTax(T, slabs) {
+    var tax = 0, prev = 0;
+    for (var k = 0; k < slabs.length; k++) {
+      var upper = slabs[k][0], rate = slabs[k][1];
+      if (T > prev) tax += (Math.min(T, upper) - prev) * rate;
+      prev = upper;
+    }
+    return tax;
+  }
+
+  function surchargeRate(T, regime) {
+    var rate = 0;
+    for (var k = 0; k < RULES.surcharge.length; k++) {
+      if (T > RULES.surcharge[k][0]) rate = RULES.surcharge[k][1];
+    }
+    if (regime === "new") rate = Math.min(rate, RULES.newSurchargeCap);
+    return rate;
+  }
+
+  // tax after rebate, before surcharge and cess
+  function baseTax(T, regime, age) {
+    var slabs = regime === "new" ? RULES.newSlabs : RULES.oldSlabs[age] || RULES.oldSlabs.under60;
+    var tax = slabTax(T, slabs);
+    if (regime === "new") {
+      var rn = RULES.rebateNew;
+      if (T <= rn.limit) tax = Math.max(0, tax - Math.min(tax, rn.max));
+      else tax = Math.min(tax, T - rn.limit); // marginal relief just above the limit
+    } else {
+      var ro = RULES.rebateOld;
+      if (T <= ro.limit) tax = Math.max(0, tax - Math.min(tax, ro.max));
+    }
+    return tax;
+  }
+
+  // total tax payable incl. surcharge (with marginal relief) and cess, rounded to nearest 10
+  function totalTax(T, regime, age) {
+    T = Math.round(Math.max(0, T) / 10) * 10;
+    var base = baseTax(T, regime, age);
+    var sr = surchargeRate(T, regime);
+    var withSur = base * (1 + sr);
+    if (sr > 0) {
+      var t = 0;
+      for (var k = 0; k < RULES.surcharge.length; k++) if (T > RULES.surcharge[k][0]) t = RULES.surcharge[k][0];
+      var prevRate = surchargeRate(t, regime);
+      var limit = baseTax(t, regime, age) * (1 + prevRate) + (T - t);
+      withSur = Math.min(withSur, limit);
+    }
+    return Math.round((withSur * (1 + RULES.cess)) / 10) * 10;
+  }
+
+  function compute(i) {
+    var R = RULES, L = R.limits;
+    var income = num(i.income);
+    var age = i.age || "under60";
+    var senior = age !== "under60";
+    var sal = !!i.salaried;
+    var basic = num(i.basic);
+
+    var stdOld = sal ? R.stdOld : 0;
+    var stdNew = sal ? R.stdNew : 0;
+
+    var hra = 0, hraRecv = num(i.hraReceived), rent = num(i.rent);
+    if (basic > 0 && hraRecv > 0 && rent > 0) {
+      hra = Math.round(Math.max(0, Math.min(hraRecv, rent - 0.1 * basic, (i.metro ? 0.5 : 0.4) * basic)));
+    }
+
+    var eNew = num(i.npsEmployer), eOld = eNew;
+    if (basic > 0) {
+      eNew = Math.round(Math.min(eNew, L.npsEmpNew * basic));
+      eOld = Math.round(Math.min(eOld, L.npsEmpOld * basic));
+    }
+
+    var c80 = Math.min(num(i.c80), L.c80);
+    var dSelfCap = senior ? L.dSelfSenior : L.dSelf;
+    var dParCap = i.parentsSenior ? L.dParentsSenior : L.dParents;
+    var dSelf = Math.min(num(i.dSelf), dSelfCap);
+    var dPar = Math.min(num(i.dParents), dParCap);
+    var n1b = Math.min(num(i.nps1B), L.nps1B);
+    var hl = Math.min(num(i.homeLoan), L.homeLoan);
+    var other = num(i.otherOld);
+
+    var oldItems = [
+      { label: "Standard deduction", v: stdOld },
+      { label: "HRA exemption", v: hra },
+      { label: "Employer NPS", v: eOld },
+      { label: "80C investments", v: c80 },
+      { label: "Health insurance (self & family)", v: dSelf },
+      { label: "Health insurance (parents)", v: dPar },
+      { label: "Extra NPS (80CCD(1B))", v: n1b },
+      { label: "Home loan interest", v: hl },
+      { label: "Other deductions", v: other }
+    ];
+    var dedOld = 0;
+    oldItems.forEach(function (x) { dedOld += x.v; });
+
+    var taxableOld = Math.max(0, income - dedOld);
+    var taxableNew = Math.max(0, income - stdNew - eNew);
+    var taxOld = totalTax(taxableOld, "old", age);
+    var taxNew = totalTax(taxableNew, "new", age);
+
+    // deduction room still unused
+    var rooms = [
+      { label: "80C (EPF, PPF, ELSS, etc.)", room: L.c80 - c80 },
+      { label: "Health insurance (80D)", room: (dSelfCap - dSelf) + (dParCap - dPar) },
+      { label: "Extra NPS (80CCD(1B))", room: L.nps1B - n1b }
+    ];
+    if (num(i.homeLoan) > 0) rooms.push({ label: "Home loan interest", room: L.homeLoan - hl });
+    var totalRoom = 0;
+    rooms.forEach(function (x) { totalRoom += x.room; });
+
+    function oldTaxAt(ded) { return totalTax(Math.max(0, income - ded), "old", age); }
+
+    // extra deductions needed for old regime to match new (when old is dearer)
+    var extra = 0;
+    if (taxOld > taxNew) {
+      var lo = 0, hi = Math.max(0, income - dedOld);
+      while (hi - lo > 10) {
+        var mid = Math.floor((lo + hi) / 2 / 10) * 10;
+        if (oldTaxAt(dedOld + mid) <= taxNew) hi = mid; else lo = mid;
+      }
+      extra = hi;
+    }
+    // how far deductions could fall before old stops winning (when old is cheaper or equal)
+    var cushion = 0;
+    if (taxOld <= taxNew) {
+      var lo2 = 0, hi2 = dedOld;
+      if (oldTaxAt(dedOld - hi2) <= taxNew) lo2 = hi2;
+      else {
+        while (hi2 - lo2 > 10) {
+          var m2 = Math.floor((lo2 + hi2) / 2 / 10) * 10;
+          if (oldTaxAt(dedOld - m2) <= taxNew) lo2 = m2; else hi2 = m2;
+        }
+      }
+      cushion = lo2;
+    }
+    var needTotal = taxOld > taxNew ? dedOld + extra : dedOld - cushion;
+    var oldIfMaxed = oldTaxAt(dedOld + totalRoom);
+
+    return {
+      income: income, age: age, salaried: sal,
+      taxableOld: taxableOld, taxableNew: taxableNew,
+      taxOld: taxOld, taxNew: taxNew,
+      winner: taxNew <= taxOld ? "new" : "old",
+      saving: Math.abs(taxOld - taxNew),
+      dedOld: dedOld, oldItems: oldItems, stdNew: stdNew, eNew: eNew,
+      rooms: rooms, totalRoom: totalRoom,
+      extra: extra, cushion: cushion, needTotal: needTotal, oldIfMaxed: oldIfMaxed,
+      hra: hra
+    };
+  }
+
+  var api = { RULES: RULES, totalTax: totalTax, baseTax: baseTax, compute: compute };
+  root.TaxCore = api;
+  if (typeof module !== "undefined" && module.exports) module.exports = api;
+})(typeof window !== "undefined" ? window : globalThis);
+
+</script>
+
+<script>
+(function () {
+  "use strict";
+  var R = TaxCore.RULES;
+
+  // ---- Next tools: set url when a tool goes live. Income and age travel after a # in the link,
+  // so Google never sees them as separate pages and they are never sent to a server. ----
+  var NEXT_TOOLS = [
+    { title: "Unused Deduction Finder", why: "See how much tax-saving room you still have this year.", url: "" },
+    { title: "Freelancer Tax Estimator", why: "Working for yourself? Estimate tax and advance tax dates.", url: "" },
+    { title: "Family Capital Gains Planner", why: "Plan sales across family members to use each exemption.", url: "" }
+  ];
+
+  var $ = function (id) { return document.getElementById(id); };
+  var moneyFields = ["income", "c80", "dSelf", "homeLoan", "basic", "hraReceived", "rent", "dParents", "nps1B", "npsEmployer", "otherOld"];
+  var defaults = { income: 1500000, c80: 150000, dSelf: 25000 };
+  var sliders = { c80: "c80r", dSelf: "dSelfr", homeLoan: "homeLoanr", nps1B: "nps1Br" };
+  var last = null;
+
+  function inr(n) { return "₹" + Math.round(n).toLocaleString("en-IN"); }
+  // Whole rupees only: anything after a decimal point is dropped (so "15,00,000.50" stays 15,00,000),
+  // and absurdly large pastes are capped.
+  function val(id) {
+    var s = ($(id).value || "").split(".")[0].replace(/[^\d]/g, "");
+    return Math.min(parseInt(s, 10) || 0, 100000000000);
+  }
+  function setVal(id, n) { $(id).value = n ? Math.round(n).toLocaleString("en-IN") : ""; }
+  function syncSlider(id) { if (sliders[id]) $(sliders[id]).value = Math.min(val(id), +$(sliders[id]).max); }
+  function updateSliderMax() { $("dSelfr").max = $("age").value === "under60" ? 25000 : 50000; syncSlider("dSelf"); }
+
+  function readInputs() {
+    return {
+      age: $("age").value, income: val("income"), salaried: $("salaried").checked,
+      c80: val("c80"), dSelf: val("dSelf"), homeLoan: val("homeLoan"),
+      basic: val("basic"), hraReceived: val("hraReceived"), rent: val("rent"), metro: $("metro").checked,
+      dParents: val("dParents"), parentsSenior: $("parentsSenior").checked,
+      nps1B: val("nps1B"), npsEmployer: val("npsEmployer"), otherOld: val("otherOld")
+    };
+  }
+
+  function words(n) {
+    if (!n) return "";
+    if (n >= 10000000) return inr(n) + " (" + (n / 10000000).toFixed(2).replace(/\.?0+$/, "") + " crore)";
+    if (n >= 100000) return inr(n) + " (" + (n / 100000).toFixed(2).replace(/\.?0+$/, "") + " lakh)";
+    return inr(n);
+  }
+
+  function render() {
+    var inp = readInputs();
+    var senior = inp.age !== "under60";
+    $("h_income").textContent = words(inp.income) || " ";
+    $("h_dSelf").textContent = "For you and your family. Limit " + inr(senior ? 50000 : 25000) + " at your age.";
+
+    var r = TaxCore.compute(inp);
+    last = r;
+    var v = $("verdict"), two = $("two"), be = $("breakeven"), how = $("how");
+
+    if (r.income <= 0) {
+      v.className = "verdict neutral";
+      v.innerHTML = '<b class="big">Enter your yearly income to see the result.</b>';
+      two.innerHTML = ""; be.innerHTML = ""; how.innerHTML = "";
+      $("tiplist").innerHTML = tipsFor(r, inp); renderTiles(inp);
+      return;
+    }
+
+    if (r.saving === 0) {
+      v.className = "verdict neutral";
+      v.innerHTML = '<b class="big">Both regimes cost the same tax</b><span>With nothing to separate them, the new regime is simpler.</span>';
+    } else {
+      var win = r.winner === "new" ? "New regime" : "Old regime";
+      var other = r.winner === "new" ? r.taxOld : r.taxNew;
+      v.className = "verdict" + (r.winner === "old" ? " old" : "");
+      v.innerHTML = '<b class="big">' + win + " saves you " + inr(r.saving) + " a year</b>" +
+        "<span>That is about " + inr(r.saving / 12) + " a month. The other regime would cost " + inr(other) + ".</span>";
+    }
+
+    function box(name, tax, taxable, isWin) {
+      var w = isWin && r.saving > 0;
+      return '<div class="box' + (w ? " win" : "") + '"><p class="t">' + name + (w ? '<span class="badge">Lower</span>' : "") + '</p><p class="n">' + inr(tax) + '</p><p class="s">Taxable income ' + inr(taxable) + "</p></div>";
+    }
+    two.innerHTML = box("New regime tax", r.taxNew, r.taxableNew, r.winner === "new") + box("Old regime tax", r.taxOld, r.taxableOld, r.winner === "old");
+
+    var h = "<h3>Breakeven: how many deductions would the old regime need?</h3>";
+    if (r.taxOld > r.taxNew) {
+      h += '<p>The old regime matches the new one when your old-regime deductions add up to <span class="num">' + inr(r.needTotal) + '</span>. You have <span class="num">' + inr(r.dedOld) + '</span> now, so you would need <span class="num">' + inr(r.extra) + "</span> more.</p>";
+      var open = r.rooms.filter(function (x) { return x.room > 0; });
+      if (open.length) {
+        h += "<p>Room you still have within the limits (if you can use it):</p><ul>";
+        open.forEach(function (x) { h += "<li>" + x.label + ": " + inr(x.room) + "</li>"; });
+        h += "</ul>";
+        if (r.oldIfMaxed <= r.taxNew) h += '<p>If you used all of it, the old regime would cost ' + inr(r.oldIfMaxed) + ', which is <span class="num">' + inr(r.taxNew - r.oldIfMaxed) + "</span> less than the new regime.</p>";
+        else h += '<p>Even if you used all of it, the old regime would still cost <span class="num">' + inr(r.oldIfMaxed - r.taxNew) + "</span> more than the new regime.</p>";
+      } else {
+        h += "<p>You are already using the full limit of the deductions listed here.</p>";
+      }
+    } else {
+      h += '<p>The old regime already wins with your ' + inr(r.dedOld) + ' of deductions. It would stop winning if they fell below about <span class="num">' + inr(r.needTotal) + "</span>, a drop of " + inr(r.cushion) + ".</p>";
+    }
+    be.innerHTML = h;
+
+    var t = "<table><tr><th>Old regime deductions</th><th>Amount</th></tr>";
+    r.oldItems.forEach(function (x) { if (x.v > 0) t += "<tr><td>" + x.label + "</td><td>" + inr(x.v) + "</td></tr>"; });
+    t += "<tr><td><b>Total</b></td><td><b>" + inr(r.dedOld) + "</b></td></tr></table>";
+    t += "<table><tr><th>Step</th><th>New</th><th>Old</th></tr>" +
+      "<tr><td>Gross income</td><td>" + inr(r.income) + "</td><td>" + inr(r.income) + "</td></tr>" +
+      "<tr><td>Deductions taken</td><td>" + inr(r.income - r.taxableNew) + "</td><td>" + inr(r.income - r.taxableOld) + "</td></tr>" +
+      "<tr><td>Taxable income</td><td>" + inr(r.taxableNew) + "</td><td>" + inr(r.taxableOld) + "</td></tr>" +
+      "<tr><td><b>Tax with cess</b></td><td><b>" + inr(r.taxNew) + "</b></td><td><b>" + inr(r.taxOld) + "</b></td></tr></table>" +
+      '<p class="tiny">Tax includes the rebate, surcharge (with marginal relief) and 4% cess, rounded to the nearest ₹10.</p>';
+    how.innerHTML = t;
+
+    $("tiplist").innerHTML = tipsFor(r, inp);
+    renderTiles(inp);
+  }
+
+  function tipsFor(r, inp) {
+    var tips = [];
+    tips.push("Check which regime your employer is using for monthly tax (TDS). Your payslip or Form 16 shows it. You can still choose either regime when you file your return, but file by the due date.");
+    if (r.income > 0) {
+      if (r.saving > 0 && r.saving < 5000) tips.push("The gap is small. The new regime needs far less paperwork, so many people pick it when the difference is this low.");
+      if (r.winner === "old" && r.saving >= 5000) tips.push("Keep proofs ready for every old-regime deduction: rent receipts (with your landlord's PAN if rent is over ₹1 lakh a year), investment statements, the home loan interest certificate and insurance receipts.");
+      if (r.winner === "new" && r.saving >= 5000) tips.push("Under the new regime you do not need to lock money into tax-saving products. Invest for your goals and time horizon instead.");
+      if (r.taxableNew > 1200000 && r.taxableNew <= 1300000) tips.push("Your taxable income is just above ₹12 lakh. Marginal relief is already included, so your tax rises slowly in this zone.");
+      if (!inp.salaried) tips.push("Business and professional income has stricter rules on switching regimes. Confirm with a CA before you choose.");
+      if (inp.hraReceived > 0 && inp.rent === 0) tips.push("You entered HRA but no rent. HRA exemption needs rent paid, so it is counted as zero for now.");
+    }
+    tips.push("Treat the result as an estimate. Income from capital gains or other special-rate sources is not included.");
+    return tips.slice(0, 5).map(function (x) { return "<li>" + x + "</li>"; }).join("");
+  }
+
+  function renderTiles(inp) {
+    var q = "income=" + encodeURIComponent(inp.income) + "&age=" + encodeURIComponent(inp.age);
+    $("tiles").innerHTML = NEXT_TOOLS.map(function (t) {
+      var inner = "<b>" + t.title + "</b><span>" + t.why + "</span>";
+      if (t.url) return '<a class="tile" href="' + t.url + "#" + q + '">' + inner + "</a>";
+      return '<div class="tile">' + inner + '<br><span class="soon">Coming soon</span></div>';
+    }).join("");
+  }
+
+  function resultText() {
+    if (!last || last.income <= 0) return "Enter your income first.";
+    var r = last, winName = r.saving === 0 ? "Same tax in both regimes" : (r.winner === "new" ? "New regime" : "Old regime") + " saves " + inr(r.saving) + " a year";
+    var lines = [
+      "Old vs New Tax Regime, " + R.fy + " (MyOmniKit.com)",
+      "Gross income: " + inr(r.income),
+      "New regime tax: " + inr(r.taxNew),
+      "Old regime tax: " + inr(r.taxOld),
+      "Result: " + winName
+    ];
+    if (r.taxOld > r.taxNew) lines.push("Old regime breakeven: total deductions of " + inr(r.needTotal) + " needed (you have " + inr(r.dedOld) + ")");
+    else if (r.saving > 0) lines.push("Old regime stays ahead while deductions stay above about " + inr(r.needTotal));
+    lines.push("Rules as of " + R.asOf + ". Estimate only, not tax advice.");
+    return lines.join("\n");
+  }
+
+  function copyText(text, done) {
+    function fallback() {
+      var ta = document.createElement("textarea");
+      ta.value = text; ta.setAttribute("readonly", ""); ta.style.cssText = "position:fixed;top:0;left:0;opacity:0";
+      document.body.appendChild(ta); ta.select();
+      try { document.execCommand("copy"); } catch (e) {}
+      document.body.removeChild(ta); done();
+    }
+    if (navigator.clipboard && window.isSecureContext) navigator.clipboard.writeText(text).then(done, fallback);
+    else fallback();
+  }
+
+  // ---- events ----
+  moneyFields.forEach(function (id) {
+    var el = $(id);
+    el.addEventListener("input", function () { syncSlider(id); render(); });
+    el.addEventListener("blur", function () { setVal(id, val(id)); });
+    el.addEventListener("focus", function () { var d = val(id); el.value = d ? String(d) : ""; });
+  });
+  Object.keys(sliders).forEach(function (id) {
+    $(sliders[id]).addEventListener("input", function () { setVal(id, +$(sliders[id]).value); render(); });
+  });
+  $("age").addEventListener("change", function () { updateSliderMax(); render(); });
+  ["salaried", "metro", "parentsSenior"].forEach(function (id) { $(id).addEventListener("change", render); });
+
+  var copyBtn = $("copyBtn");
+  copyBtn.addEventListener("click", function () {
+    copyText(resultText(), function () {
+      copyBtn.textContent = "Copied ✓";
+      setTimeout(function () { copyBtn.textContent = "Copy Result"; }, 1600);
+    });
+  });
+
+  function fillDefaults() {
+    moneyFields.forEach(function (id) { setVal(id, defaults[id] || 0); });
+    $("age").value = "under60"; $("salaried").checked = true; $("metro").checked = false; $("parentsSenior").checked = false;
+    updateSliderMax();
+    Object.keys(sliders).forEach(syncSlider);
+  }
+  $("resetBtn").addEventListener("click", function () { fillDefaults(); render(); });
+
+  // ---- start: defaults, then any values passed by another tool (after the #, or as ?query) ----
+  fillDefaults();
+  var params = new URLSearchParams(location.hash.replace(/^#/, "") || location.search);
+  moneyFields.forEach(function (id) {
+    var p = parseInt(params.get(id), 10);
+    if (isFinite(p) && p > 0) setVal(id, p);
+  });
+  var a = params.get("age");
+  if (a === "under60" || a === "senior" || a === "super") $("age").value = a;
+  updateSliderMax();
+  Object.keys(sliders).forEach(syncSlider);
+
+  $("rules").innerHTML = "Rules as of " + R.asOf + " for " + R.fy + " (" + R.ay + "). Slabs match the rates published by the Income Tax Department, and Budget 2026 made no change to slabs. Source: <a href=\"https://incometaxindia.gov.in/Documents/Left%20Menu/TAX%20RATES_Indvl.htm\" rel=\"noopener\">Income Tax Department tax rates</a>.";
+  render();
+})();
+</script>
+</body>
+</html>
